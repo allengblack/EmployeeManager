@@ -1,0 +1,151 @@
+﻿@model EmployeeManager.Models.Employee
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Employee</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @Value = Model.DateOfBirth.ToString("yyyy-MM-dd"), @class = "form-control", @type = "date", @min = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 75)).ToString("yyyy-MM-dd"), @max = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 18)).ToString("yyyy-MM-dd"), @required = "required" } })
+                @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @readonly = true, @type = "email", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sex, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.sex,
+                        Enum.GetNames(typeof(EmployeeManager.Models.Employee.Gender)).Select((level) => new SelectListItem() { Text = level, Value = level }), htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.sex, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MaritalStatus, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.MaritalStatus, EmployeeManager.Models.Employee.MaritalStatusList.Select((level) => new SelectListItem() { Text = level, Value = level }), htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.MaritalStatus, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberOfChildren, htmlAttributes: new { @class = "control-label col-md-2", @required = "required" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NumberOfChildren, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NumberOfChildren, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (this.User.IsInRole("Admin"))
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2" for="empActive.Active">Is Active</label>
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        <input type="hidden" name="empActive.UserId" value="@Model.ApplicationUserId" />
+                        <input @(Model.IsActive ? "checked" : "") class="check-box" data-val="true" data-val-required="The IsActive field is required."
+                               name="empActive.Active" type="checkbox">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="empActive.Active" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateOfHire, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DateOfHire, new { htmlAttributes = new { @Value = Model.DateOfHire != null ? Model.DateOfHire.Value.ToString("yyyy-MM-dd") : null, @class = "form-control", @type = "date", @required = "required", @max = DateTime.Now.ToString("yyyy-MM-dd") } })
+                    @Html.ValidationMessageFor(model => model.DateOfHire, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaxEducation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.MaxEducation, EmployeeManager.Models.Employee.EducationLevels.Select((level) => new SelectListItem() { Text = level, Value = level }), htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.MaxEducation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Position, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Position,
+                        Enum.GetNames(typeof(EmployeeManager.Models.Employee.Positions)).Select((level, i) => new SelectListItem() { Text = level, Value = i == 0 ? null : level }), htmlAttributes: new { @class = "form-control", @required = "required" })
+                    @Html.ValidationMessageFor(model => model.Position, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateOfLastEmploment, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DateOfLastEmploment, new { htmlAttributes = new { @Value = Model.DateOfLastEmploment != null ? Model.DateOfLastEmploment.Value.ToString("yyyy-MM-dd") : null, @class = "form-control", @type = "date" } })
+                    @Html.ValidationMessageFor(model => model.DateOfLastEmploment, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Salary, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Back to List", "Index")
+    }
+    else
+    {
+        @Html.ActionLink("Back to Profile", "Index")
+    }
+</div>
